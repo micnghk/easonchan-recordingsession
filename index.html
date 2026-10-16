@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Recording Sessions with Mr. Eason Chan | 現場錄音音樂會專場導覽</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+            mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+          },
+          colors: {
+            brand: {
+              red: '#EE2A24',
+              redDark: '#C11C17',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    @keyframes pulse-rec {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.9); }
+    }
+    .rec-dot {
+      animation: pulse-rec 1.8s infinite ease-in-out;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .btn-press:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-28 bg-[#0A0A0C] text-[#f5f5f7] dark:bg-[#0A0A0C] dark:text-[#f5f5f7] transition-colors duration-200">
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-neutral-900/95 dark:bg-neutral-900/95 text-white dark:text-white border border-neutral-700 dark:border-neutral-700 px-4 py-2.5 rounded-full text-xs sm:text-sm font-medium tracking-wide shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-brand-red"></i>
+    <span id="toast-msg">已儲存至心水清單</span>
+  </div>
+
+  <!-- Top Recording Header with Light/Dark Mode Switch -->
+  <header class="border-b border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-black/85 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
+    <div class="max-w-xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-red rec-dot"></span>
+        <span class="text-xs font-mono tracking-widest uppercase font-semibold text-neutral-800 dark:text-neutral-200">REC</span>
+        <span class="text-[10px] bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 font-mono px-2 py-0.5 rounded border border-neutral-300 dark:border-neutral-700">STUDIO MASTER</span>
+      </div>
+      
+      <!-- Theme Switcher & Year Indicator -->
+      <div class="flex items-center space-x-3">
+        <span class="text-xs font-mono text-neutral-500 dark:text-neutral-400">2026—2027</span>
+        
+        <!-- Light / Dark Toggle Button -->
+        <button 
+          id="theme-toggle-btn"
+          onclick="toggleTheme()" 
+          class="w-8 h-8 rounded-full border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center justify-center text-xs transition-colors hover:border-neutral-400 dark:hover:border-neutral-500"
+          title="切換日間 / 夜間模式"
+          aria-label="切換顏色主題"
+        >
+          <i id="theme-toggle-icon" class="fa-solid fa-sun text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Poster & Concert Details -->
+  <main class="max-w-xl mx-auto px-4 pt-4">
+    <div class="border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 bg-white dark:bg-gradient-to-b dark:from-neutral-900 dark:to-black relative overflow-hidden shadow-sm dark:shadow-xl transition-colors duration-200">
+      <div class="absolute -top-12 -right-12 w-36 h-36 bg-red-600/10 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="flex justify-between items-start">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded bg-neutral-900 dark:bg-neutral-950 flex items-center justify-center border border-neutral-800 text-amber-400 font-bold text-sm">
+            M
+          </div>
+          <span class="text-[11px] font-medium tracking-wide text-neutral-500 dark:text-neutral-400">McDonald's Presents</span>
+        </div>
+        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/70 text-neutral-600 dark:text-neutral-300">
+          全 26 場 · 270 首曲目
+        </span>
+      </div>
+
+      <h1 class="mt-4 text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight text-neutral-900 dark:text-white">
+        Recording Sessions<br>
+        <span class="text-neutral-600 dark:text-neutral-300 font-normal text-xl sm:text-2xl">with Mr. Eason Chan</span>
+      </h1>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1 font-medium tracking-wider">香港演藝學院 歌劇院 現場錄音專場導覽</p>
+
+      <!-- Key metadata grid -->
+      <div class="grid grid-cols-2 gap-3 pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-800/80 text-xs">
+        <div>
+          <span class="text-neutral-400 dark:text-neutral-500 font-mono text-[10px] block uppercase tracking-wider">VENUE 地點</span>
+          <p class="font-medium text-neutral-800 dark:text-neutral-200 mt-0.5">香港演藝學院 歌劇院</p>
+          <p class="text-[10px] text-neutral-500 dark:text-neutral-400">Lyric Theatre, HKAPA</p>
+        </div>
+        <div>
+          <span class="text-neutral-400 dark:text-neutral-500 font-mono text-[10px] block uppercase tracking-wider">TIME & PRICE</span>
+          <p class="font-medium text-neutral-800 dark:text-neutral-200 mt-0.5">8:00 PM</p>
+          <p class="text-[10px] text-neutral-700 dark:text-neutral-300 font-mono font-semibold">$1,280 / $980</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Search & Filtering -->
+    <div class="mt-4 space-y-3">
+      <!-- Search Box -->
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs"></i>
+        <input 
+          id="search-input" 
+          type="text" 
+          placeholder="搜尋 270 首歌名、專輯、星期 (例如：浮誇、Lonely Christmas、U87)..." 
+          class="w-full pl-9 pr-8 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 focus:border-neutral-500 dark:focus:border-neutral-500 rounded-xl text-xs sm:text-sm text-neutral-900 dark:text-neutral-200 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none transition-all shadow-sm dark:shadow-none"
+        />
+        <button id="clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-white text-xs">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Month & View Filter Tabs -->
+      <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-1">
+        <button onclick="setTab('all')" id="tab-all" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold border bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-black dark:border-white transition-all whitespace-nowrap btn-press shadow-sm">
+          全部 (26場)
+        </button>
+        <button onclick="setTab('DEC2026')" id="tab-DEC2026" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all whitespace-nowrap btn-press shadow-sm">
+          2026年12月 (10場)
+        </button>
+        <button onclick="setTab('JAN2027')" id="tab-JAN2027" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all whitespace-nowrap btn-press shadow-sm">
+          2027年1月 (10場)
+        </button>
+        <button onclick="setTab('FEB2027')" id="tab-FEB2027" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all whitespace-nowrap btn-press shadow-sm">
+          2027年2月 (6場)
+        </button>
+        <button onclick="setTab('saved')" id="tab-saved" class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium border border-brand-red/40 bg-red-50 dark:bg-red-950/20 text-brand-red transition-all whitespace-nowrap flex items-center space-x-1.5 btn-press shadow-sm">
+          <i class="fa-solid fa-heart text-[10px]"></i>
+          <span>我的心水 (<span id="saved-count-badge">0</span>)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Filter Display / Tip -->
+    <div id="filter-banner" class="mt-3 flex items-center justify-between text-[11px] text-neutral-500 dark:text-neutral-400 px-1">
+      <span id="results-count-text">顯示 26 個專場夜 · 270 首曲目</span>
+      <span class="text-neutral-400 dark:text-neutral-500 font-mono text-[10px]">點擊可於 Spotify / YT Music 預覽試聽</span>
+    </div>
+
+    <!-- Shows List Container -->
+    <div id="shows-container" class="mt-3 space-y-3.5">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-16 px-4">
+      <div class="w-12 h-12 mx-auto rounded-full bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center text-neutral-400 dark:text-neutral-500 mb-3 text-lg">
+        <i class="fa-regular fa-face-meh"></i>
+      </div>
+      <p class="text-sm font-medium text-neutral-700 dark:text-neutral-300">未有符合條件的專場或歌曲</p>
+      <p class="text-xs text-neutral-500 mt-1">請嘗試調整搜尋關鍵字，或切換至其他月份選單。</p>
+      <button onclick="resetFilters()" class="mt-4 px-4 py-1.5 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-xs rounded-lg transition-colors">
+        重設所有篩選
+      </button>
+    </div>
+
+    <!-- Wishlist / Analysis Modal Drawer -->
+    <div id="summary-modal" class="fixed inset-0 z-50 bg-black/75 dark:bg-black/85 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
+      <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+        
+        <!-- Modal Header -->
+        <div class="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-neutral-900 sticky top-0">
+          <div>
+            <h2 class="text-base font-bold text-neutral-900 dark:text-white flex items-center space-x-2">
+              <i class="fa-solid fa-chart-pie text-brand-red text-sm"></i>
+              <span>選場推薦與心水分析</span>
+            </h2>
+            <p class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">依據你收藏的歌曲與場次，精準比對 270 首曲目推薦最佳入場夜</p>
+          </div>
+          <button onclick="toggleSummaryModal(false)" class="w-7 h-7 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="p-5 overflow-y-auto space-y-5 text-neutral-800 dark:text-neutral-200">
+          
+          <!-- Recommendation Box -->
+          <div id="recommendation-card" class="p-4 rounded-xl border border-brand-red/30 bg-red-50/50 dark:bg-gradient-to-r dark:from-red-950/30 dark:to-neutral-900">
+            <div class="flex items-center space-x-2 text-brand-red text-xs font-semibold uppercase tracking-wider">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>專屬配對分析結果</span>
+            </div>
+            <div id="recommendation-body" class="mt-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Saved Shows Section -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">已收藏專場 (<span id="summary-fav-shows-count">0</span>)</h3>
+            </div>
+            <div id="summary-shows-list" class="space-y-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Saved Songs Section -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">已收藏單曲 (<span id="summary-fav-songs-count">0</span>)</h3>
+            </div>
+            <div id="summary-songs-list" class="space-y-1.5 max-h-48 overflow-y-auto no-scrollbar pr-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center space-x-2">
+            <button onclick="copyWishlistToClipboard()" class="flex-1 py-2.5 bg-neutral-900 hover:bg-black text-white dark:bg-neutral-100 dark:hover:bg-white dark:text-black font-semibold text-xs rounded-xl flex items-center justify-center space-x-2 btn-press transition-all shadow-sm">
+              <i class="fa-regular fa-clipboard"></i>
+              <span>複製心水清單發送朋友</span>
+            </button>
+            <button onclick="clearAllFavorites()" class="px-3.5 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-500 dark:text-neutral-400 hover:text-brand-red text-xs rounded-xl transition-all" title="清空全部">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sticky Bottom Quick Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-xl border-t border-neutral-200 dark:border-neutral-800/80 z-40 transition-colors">
+    <div class="max-w-xl mx-auto px-5 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleAudioTester()" id="test-audio-btn" class="flex items-center space-x-1.5 text-xs text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 transition-colors">
+          <i class="fa-solid fa-headphones text-[11px] text-brand-red"></i>
+          <span class="text-[11px]">母帶調音監聽響聲</span>
+        </button>
+      </div>
+
+      <button onclick="toggleSummaryModal(true)" class="relative bg-brand-red hover:bg-brand-redDark text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 shadow-md shadow-red-900/20 btn-press transition-all">
+        <i class="fa-solid fa-list-check text-xs"></i>
+        <span>選場推薦分析</span>
+        <span id="nav-fav-badge" class="ml-1 w-5 h-5 rounded-full bg-white text-brand-red text-[10px] font-bold flex items-center justify-center">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    /* =========================================================================
+       CLEAN 270 TRACKS & 26 SHOWS DATASET (No language pill, No promo tags)
+       ========================================================================= */
+    const CONCERT_DATES = [
+      // ---------------- DEC 2026 (10 SHOWS) ----------------
+      {
+        id: "dec-12",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月12日",
+        dayNum: "12",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "陳奕迅",
+            year: "1996",
+            tracks: [
+              "時代曲", "傷信", "遊離份子", "我怕你不肯", "有意無意",
+              "安守本份", "愛情，幼稚！", "從未痴心", "其實我記得", "當心中有戀愛感覺"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-13",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月13日",
+        dayNum: "13",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "與我常在",
+            year: "1997",
+            tracks: [
+              "現場直播", "與我常在", "愛沒有左右", "生命有幾好", "抱擁這分鐘",
+              "伴遊", "跟我走好嗎", "今天等我來", "敵人", "那一夜有沒有說?"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-16",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月16日",
+        dayNum: "16",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期三",
+        dayOfWeekEn: "WED",
+        albums: [
+          {
+            name: "I Had A Great Time!",
+            year: "1999",
+            tracks: [
+              "24", "八里公路", "萬佛朝宗", "放下來", "愛你入骨",
+              "冤氣", "最後今晚", "不求人", "一切還好", "開不了心"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-17",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月17日",
+        dayNum: "17",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期四",
+        dayOfWeekEn: "THU",
+        albums: [
+          {
+            name: "The Easy Ride",
+            year: "2001",
+            tracks: [
+              "阿士匹靈", "陽性反應", "衝口而出", "大開眼戒 (打回原形)", "我不好愛",
+              "熱帶雨林", "人工智能", "結束開始", "活著多好", "他一個人", "不知所謂"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-19",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月19日",
+        dayNum: "19",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "H³M",
+            year: "2009",
+            tracks: [
+              "Allegro, Opus 3.3am", "還有什麼可以送給你", "於心有愧", "今天只做一件事", "一個旅人",
+              "七百年後", "Life Goes On", "太陽照常升起", "不來也不去", "沙龍"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-20",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月20日",
+        dayNum: "20",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "Taste the Atmosphere",
+            year: "2010",
+            tracks: [
+              "Welcome to the Future", "講男講女 (feat. 露雲娜)", "葉問風中轉",
+              "花花世界", "我杯茶 (feat. 莫文蔚)", "超錯"
+            ]
+          },
+          {
+            name: "Stranger Under My Skin",
+            year: "2011",
+            tracks: [
+              "六月飛霜", "Stranger Under My Skin", "最後派對", "苦瓜", "沼氣",
+              "My Private Christmas Song", "樂園 (feat. 黃韻玲)", "等你愛我", "因為愛情 (feat. 王菲)"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-23",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月23日",
+        dayNum: "23",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期三",
+        dayOfWeekEn: "WED",
+        albums: [
+          {
+            name: "不想放手",
+            year: "2008",
+            tracks: [
+              "27 Seconds", "路...一直都在", "獨居動物", "倒帶人生", "Aren't You Glad",
+              "7", "不要說話", "漂亮小姐", "臭美", "土星環", "然後怎樣"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-24",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月24日",
+        dayNum: "24",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期四",
+        dayOfWeekEn: "THU",
+        albums: [
+          {
+            name: "4 A Change",
+            year: "2002",
+            tracks: ["King Kong", "Lonely Christmas", "第一類接觸", "少見不怪"]
+          },
+          {
+            name: "幸福",
+            year: "2002",
+            tracks: ["幸福摩天輪", "飄飄飄飄", "時光倒流二十年", "忽然難過", "專家話"]
+          },
+          {
+            name: "新生活",
+            year: "1998",
+            tracks: ["終於一百日", "新生活"]
+          }
+        ]
+      },
+      {
+        id: "dec-26",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月26日",
+        dayNum: "26",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "黑·白·灰",
+            year: "2003",
+            tracks: [
+              "阿怪", "我們都寂寞", "兄妹", "十年", "要你的",
+              "世界", "謝謝", "像一句廣告", "寂寞奏鳴曲", "Last Order"
+            ]
+          }
+        ]
+      },
+      {
+        id: "dec-27",
+        monthKey: "DEC2026",
+        dateDisplay: "2026年12月27日",
+        dayNum: "27",
+        monthShort: "DEC 2026",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "Special Thanks To...",
+            year: "2002",
+            tracks: [
+              "你的背包", "謝謝儂", "男人的錯", "你會不會", "故事",
+              "想哭", "人造衛星", "沒有手機的日子", "跳蚤市場", "狂人日記"
+            ]
+          }
+        ]
+      },
+
+      // ---------------- JAN 2027 (10 SHOWS) ----------------
+      {
+        id: "jan-06",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月6日",
+        dayNum: "06",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期三",
+        dayOfWeekEn: "WED",
+        albums: [
+          {
+            name: "What's Going On...?",
+            year: "2006",
+            tracks: [
+              "裙下之臣", "最後的嬉皮士", "白玫瑰", "黑擇明", "富士山下",
+              "不如不見", "心深傷透", "解藥", "天公地道", "粵語殘片"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-07",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月7日",
+        dayNum: "07",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期四",
+        dayOfWeekEn: "THU",
+        albums: [
+          {
+            name: "認了吧",
+            year: "2007",
+            tracks: [
+              "煙味", "淘汰", "快樂男生", "紅玫瑰", "月黑風高", "愛情轉移",
+              "好久不見", "愛是一本書", "第一個雅皮士", "白色球鞋", "月球上的人"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-09",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月9日",
+        dayNum: "09",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "Life Continues...",
+            year: "2006",
+            tracks: ["低調", "人車誌", "最佳損友", "暴殄天物", "落花流水", "大得太快", "想聽"]
+          },
+          {
+            name: "Time Flies",
+            year: "2010",
+            tracks: ["無人之境", "大人", "一絲不掛", "陀飛輪", "心腹", "味之素"]
+          }
+        ]
+      },
+      {
+        id: "jan-10",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月10日",
+        dayNum: "10",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "Solidays",
+            year: "2008",
+            tracks: ["歌·頌", "後台"]
+          }
+        ]
+      },
+      {
+        id: "jan-23",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月23日",
+        dayNum: "23",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "天佑愛人",
+            year: "1999",
+            tracks: [
+              "昨日", "今日", "每一個明天", "眼眉調", "一",
+              "第五個現代化", "快高長大", "如果這一秒鐘你跟我講你不愛我", "我的世界末日", "貝多芬與我"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-24",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月24日",
+        dayNum: "24",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "Listen To Eason Chan",
+            year: "2007",
+            tracks: [
+              "瑪利奧派對", "熱島小夜曲", "閃", "演唱會", "滑鐵盧車站",
+              "Crying in the Party", "狂熱革命", "變色龍", "時代巨輪", "乜嘢啫", "兄弟 (feat. 劉德華)"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-27",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月27日",
+        dayNum: "27",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期三",
+        dayOfWeekEn: "WED",
+        albums: [
+          {
+            name: "Nothing Really Matters",
+            year: "2000",
+            tracks: [
+              "送院途中", "黑夜不再來", "美麗有罪", "戲迷情人", "和平飯店",
+              "我感激", "到此一遊", "當這地球沒有花", "Made in Hong Kong", "愛上你是我眼睛的錯"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-28",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月28日",
+        dayNum: "28",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期四",
+        dayOfWeekEn: "THU",
+        albums: [
+          {
+            name: "怎麼樣",
+            year: "2005",
+            tracks: [
+              "不能再等待", "對不起 謝謝", "Hippie", "不然你要我怎麼樣", "不睡",
+              "一夜銷魂", "浮城", "早開的長途班", "聽聽", "人神鬥"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-30",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月30日",
+        dayNum: "30",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "The Line-Up",
+            year: "2002",
+            tracks: [
+              "心裡有鬼", "我有我愛你", "明年今日", "人來人往", "季軍",
+              "隨意門", "1874", "防不勝防", "兩名男子街頭相遇", "黑面"
+            ]
+          }
+        ]
+      },
+      {
+        id: "jan-31",
+        monthKey: "JAN2027",
+        dateDisplay: "2027年1月31日",
+        dayNum: "31",
+        monthShort: "JAN 2027",
+        dayOfWeek: "星期日",
+        dayOfWeekEn: "SUN",
+        albums: [
+          {
+            name: "Live For Today",
+            year: "2003",
+            tracks: [
+              "幸災樂禍", "Katrina", "十面埋伏", "呀邊個邊個", "小孩不懂怕",
+              "謊言", "真相", "猜情尋", "忘記歌詞", "New Order", "歲月如歌"
+            ]
+          }
+        ]
+      },
+
+      // ---------------- FEB 2027 (6 SHOWS) ----------------
+      {
+        id: "feb-12",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月12日",
+        dayNum: "12",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期五",
+        dayOfWeekEn: "FRI",
+        albums: [
+          {
+            name: "打得火熱",
+            year: "2000",
+            tracks: [
+              "K歌之王", "打得火熱", "新廣告歌", "低等動物", "綿綿",
+              "美麗謊言", "吹微風", "溫室效應", "活躍症", "下週同樣時間 (再見!)"
+            ]
+          }
+        ]
+      },
+      {
+        id: "feb-13",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月13日",
+        dayNum: "13",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "It's me 反正是我",
+            year: "2001",
+            tracks: [
+              "Because You're Good To Me", "低等動物", "不如這樣", "愛是懷疑", "我也不會那麼做",
+              "K歌之王", "沒有你", "冤家", "全世界失眠", "Good Times"
+            ]
+          }
+        ]
+      },
+      {
+        id: "feb-16",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月16日",
+        dayNum: "16",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期二",
+        dayOfWeekEn: "TUE",
+        albums: [
+          {
+            name: "上五樓的快活",
+            year: "2009",
+            tracks: [
+              "在你身邊", "這樣的一個麻煩", "多少", "Nothing Ever Happened", "你為什麼哭了呢",
+              "謀情害命", "我甲你", "心的距離", "床頭燈", "給你", "從何說起"
+            ]
+          }
+        ]
+      },
+      {
+        id: "feb-17",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月17日",
+        dayNum: "17",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期三",
+        dayOfWeekEn: "WED",
+        albums: [
+          {
+            name: "我的快樂時代",
+            year: "1998",
+            tracks: [
+              "我的快樂時代", "我甚麼都沒有", "天下無雙", "黃金時代", "新曲+精選",
+              "愈想愈無謂", "相信相依", "兩種講法", "請相信我", "反高潮"
+            ]
+          }
+        ]
+      },
+      {
+        id: "feb-19",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月19日",
+        dayNum: "19",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期五",
+        dayOfWeekEn: "FRI",
+        albums: [
+          {
+            name: "Shall We Dance? Shall We Talk!",
+            year: "2001",
+            tracks: [
+              "Shall We Dance", "Shall We Talk", "2001太空漫遊", "失戀太少", "單車",
+              "天使的禮物", "怪物", "孤獨探戈", "信心花舍", "黑暗中漫舞", "遺失的國度"
+            ]
+          }
+        ]
+      },
+      {
+        id: "feb-20",
+        monthKey: "FEB2027",
+        dateDisplay: "2027年2月20日",
+        dayNum: "20",
+        monthShort: "FEB 2027",
+        dayOfWeek: "星期六",
+        dayOfWeekEn: "SAT",
+        albums: [
+          {
+            name: "U87",
+            year: "2005",
+            tracks: [
+              "爛", "阿牛", "夕陽無限好", "16月6日晴", "浮誇",
+              "葡萄成熟時", "三個人的探戈", "不良嗜好", "怕死", "大個女", "新美人主義", "遇見了你"
+            ]
+          }
+        ]
+      }
+    ];
+
+    /* =========================================================================
+       THEME & LOCAL STORAGE
+       ========================================================================= */
+    const STORAGE_KEY_SHOWS = "eason_sessions_fav_shows";
+    const STORAGE_KEY_SONGS = "eason_sessions_fav_songs";
+    const STORAGE_KEY_THEME = "eason_sessions_theme";
+
+    let state = {
+      activeTab: 'all',
+      searchQuery: '',
+      favoriteShows: new Set(),
+      favoriteSongs: new Set(),
+      theme: 'dark'
+    };
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      setTheme(savedTheme, false);
+    }
+
+    function setTheme(theme, save = true) {
+      state.theme = theme;
+      const html = document.documentElement;
+      const icon = document.getElementById("theme-toggle-icon");
+
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        document.body.className = "min-h-screen pb-28 bg-[#0A0A0C] text-[#f5f5f7] transition-colors duration-200";
+        if (icon) icon.className = "fa-solid fa-sun text-amber-400";
+      } else {
+        html.classList.remove('dark');
+        document.body.className = "min-h-screen pb-28 bg-[#FAFAFC] text-[#1c1c1e] transition-colors duration-200";
+        if (icon) icon.className = "fa-solid fa-moon text-indigo-500";
+      }
+
+      if (save) {
+        try {
+          localStorage.setItem(STORAGE_KEY_THEME, theme);
+        } catch (e) {}
+      }
+    }
+
+    function toggleTheme() {
+      const newTheme = state.theme === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme, true);
+      showToast(newTheme === 'dark' ? "已切換至深色錄音室模式" : "已切換至清新淺色模式", false);
+    }
+
+    function loadSavedState() {
+      try {
+        const savedShows = JSON.parse(localStorage.getItem(STORAGE_KEY_SHOWS) || '[]');
+        const savedSongs = JSON.parse(localStorage.getItem(STORAGE_KEY_SONGS) || '[]');
+        state.favoriteShows = new Set(savedShows);
+        state.favoriteSongs = new Set(savedSongs);
+      } catch (e) {
+        state.favoriteShows = new Set();
+        state.favoriteSongs = new Set();
+      }
+      updateFavBadges();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_SHOWS, JSON.stringify(Array.from(state.favoriteShows)));
+        localStorage.setItem(STORAGE_KEY_SONGS, JSON.stringify(Array.from(state.favoriteSongs)));
+      } catch (e) {
+        console.warn("Storage restricted", e);
+      }
+      updateFavBadges();
+    }
+
+    function updateFavBadges() {
+      const showCount = state.favoriteShows.size;
+      const songCount = state.favoriteSongs.size;
+      
+      const badge = document.getElementById("saved-count-badge");
+      if (badge) badge.innerText = showCount;
+
+      const navBadge = document.getElementById("nav-fav-badge");
+      if (navBadge) navBadge.innerText = showCount;
+
+      const summaryFavShowsCount = document.getElementById("summary-fav-shows-count");
+      if (summaryFavShowsCount) summaryFavShowsCount.innerText = showCount;
+
+      const summaryFavSongsCount = document.getElementById("summary-fav-songs-count");
+      if (summaryFavSongsCount) summaryFavSongsCount.innerText = songCount;
+    }
+
+    function showToast(message, isAdded = true) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-msg");
+      const toastIcon = document.getElementById("toast-icon");
+      
+      toastMsg.innerText = message;
+      toastIcon.className = isAdded ? "fa-solid fa-heart text-brand-red" : "fa-solid fa-circle-check text-neutral-400";
+      
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100", "top-7");
+
+      setTimeout(() => {
+        toast.classList.remove("opacity-100", "top-7");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 1800);
+    }
+
+    /* =========================================================================
+       AUDIO PREVIEW / SYNTHESIZER SIMULATION
+       ========================================================================= */
+    let audioCtx = null;
+    function playBeepTone(freq = 440, type = 'sine', duration = 0.25) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (err) {
+        console.log("AudioContext playback suppressed", err);
+      }
+    }
+
+    function toggleAudioTester() {
+      playBeepTone(880, 'triangle', 0.15);
+      setTimeout(() => playBeepTone(1320, 'sine', 0.3), 120);
+      showToast("● 錄音室母帶調音監聽 (Studio Tone OK)");
+    }
+
+    /* =========================================================================
+       TAB & SEARCH FILTERING
+       ========================================================================= */
+    function setTab(tab) {
+      state.activeTab = tab;
+      
+      document.querySelectorAll(".filter-tab").forEach(el => {
+        el.className = "filter-tab px-3 py-1.5 rounded-lg text-xs font-medium border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all whitespace-nowrap btn-press shadow-sm";
+      });
+
+      const currentTabBtn = document.getElementById(`tab-${tab}`);
+      if (tab === 'saved') {
+        currentTabBtn.className = "filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold border border-brand-red bg-red-50 dark:bg-brand-red/10 text-brand-red transition-all whitespace-nowrap flex items-center space-x-1.5 btn-press shadow-sm";
+      } else if (currentTabBtn) {
+        currentTabBtn.className = "filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold border bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-black dark:border-white transition-all whitespace-nowrap btn-press shadow-sm";
+      }
+
+      renderShows();
+    }
+
+    function resetFilters() {
+      state.searchQuery = '';
+      document.getElementById('search-input').value = '';
+      document.getElementById('clear-search').classList.add('hidden');
+      setTab('all');
+    }
+
+    /* =========================================================================
+       FAVORITING ACTIONS
+       ========================================================================= */
+    function toggleShowFavorite(showId, event) {
+      if (event) event.stopPropagation();
+      playBeepTone(523.25, 'sine', 0.12);
+
+      const show = CONCERT_DATES.find(s => s.id === showId);
+      const showTitle = show ? `${show.dateDisplay}` : "該專場";
+
+      if (state.favoriteShows.has(showId)) {
+        state.favoriteShows.delete(showId);
+        showToast(`已移除 ${showTitle} 專場`, false);
+      } else {
+        state.favoriteShows.add(showId);
+        showToast(`已將 ${showTitle} 加入心水場次！`, true);
+      }
+
+      saveState();
+      renderShows();
+    }
+
+    function toggleSongFavorite(songTitle, showId, event) {
+      if (event) event.stopPropagation();
+      playBeepTone(659.25, 'triangle', 0.1);
+
+      if (state.favoriteSongs.has(songTitle)) {
+        state.favoriteSongs.delete(songTitle);
+        showToast(`已取消收藏《${songTitle}》`, false);
+      } else {
+        state.favoriteSongs.add(songTitle);
+        showToast(`已收藏《${songTitle}》`, true);
+      }
+
+      saveState();
+      renderShows();
+    }
+
+    /* =========================================================================
+       SEARCH PREVIEW: encodeURIComponent("(song name) 陳奕迅")
+       ========================================================================= */
+    function openMusicPreview(track, platform, event) {
+      if (event) event.stopPropagation();
+      playBeepTone(440, 'sine', 0.08);
+
+      const queryTerm = `${track} 陳奕迅`;
+      const encodedQuery = encodeURIComponent(queryTerm);
+      let url = "";
+
+      if (platform === 'spotify') {
+        url = `https://open.spotify.com/search/${encodedQuery}`;
+      } else if (platform === 'youtube') {
+        url = `https://music.youtube.com/search?q=${encodedQuery}`;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    /* =========================================================================
+       RENDER SHOWS AND TRACKLISTS
+       ========================================================================= */
+    function renderShows() {
+      const container = document.getElementById("shows-container");
+      const emptyState = document.getElementById("empty-state");
+      const resultsCountText = document.getElementById("results-count-text");
+      
+      const query = state.searchQuery.trim().toLowerCase();
+      
+      let filtered = CONCERT_DATES.filter(show => {
+        if (state.activeTab === 'DEC2026' && show.monthKey !== 'DEC2026') return false;
+        if (state.activeTab === 'JAN2027' && show.monthKey !== 'JAN2027') return false;
+        if (state.activeTab === 'FEB2027' && show.monthKey !== 'FEB2027') return false;
+        if (state.activeTab === 'saved') {
+          const isShowMarked = state.favoriteShows.has(show.id);
+          const hasFavSong = show.albums.some(alb => alb.tracks.some(t => state.favoriteSongs.has(t)));
+          if (!isShowMarked && !hasFavSong) return false;
+        }
+
+        if (query) {
+          const matchDate = show.dateDisplay.toLowerCase().includes(query) || show.dayOfWeek.toLowerCase().includes(query);
+          const matchAlbum = show.albums.some(alb => alb.name.toLowerCase().includes(query));
+          const matchTrack = show.albums.some(alb => alb.tracks.some(t => t.toLowerCase().includes(query)));
+          return matchDate || matchAlbum || matchTrack;
+        }
+
+        return true;
+      });
+
+      let totalTracksInView = 0;
+      filtered.forEach(s => s.albums.forEach(a => totalTracksInView += a.tracks.length));
+
+      resultsCountText.innerText = `顯示 ${filtered.length} 個專場夜 · ${totalTracksInView} 首曲目 ${state.activeTab === 'saved' ? '(心水專選)' : ''}`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      let html = '';
+      filtered.forEach(show => {
+        const isShowFav = state.favoriteShows.has(show.id);
+        const albumsTitle = show.albums.map(a => `《${a.name}》`).join(' + ');
+        
+        let showMatchedFavSongsCount = 0;
+        let showTotalTracks = 0;
+        show.albums.forEach(alb => {
+          showTotalTracks += alb.tracks.length;
+          alb.tracks.forEach(t => {
+            if (state.favoriteSongs.has(t)) showMatchedFavSongsCount++;
+          });
+        });
+
+        html += `
+          <div class="rounded-2xl border transition-all duration-200 overflow-hidden ${
+            isShowFav 
+              ? 'border-brand-red/60 bg-white dark:bg-neutral-900/90 shadow-md dark:shadow-lg dark:shadow-red-950/20' 
+              : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/40 hover:border-neutral-300 dark:hover:border-neutral-700 shadow-sm'
+          }">
+            
+            <!-- Card Header: Clean Date, Monochrome Weekday Badge, Album, & Heart -->
+            <div class="p-4 sm:p-5 border-b border-neutral-100 dark:border-neutral-800/80 flex items-start justify-between bg-neutral-50/70 dark:bg-neutral-900/70">
+              <div class="flex items-start space-x-3.5">
+                <!-- Date Block -->
+                <div class="flex flex-col items-center justify-center w-12 h-13 rounded-xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 px-2 py-1.5 shadow-sm">
+                  <span class="text-[10px] font-mono uppercase text-brand-red font-bold leading-none">${show.monthShort.split(' ')[0]}</span>
+                  <span class="text-xl font-extrabold text-neutral-900 dark:text-white leading-none mt-1">${show.dayNum}</span>
+                </div>
+                
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white tracking-tight">${show.dateDisplay}</span>
+                    <!-- Monochrome / neutral weekday badge (No red text/background for Sat/Sun) -->
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700">
+                      ${show.dayOfWeek} (${show.dayOfWeekEn})
+                    </span>
+                  </div>
+                  
+                  <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                    <span class="text-xs text-neutral-600 dark:text-neutral-300">
+                      專輯：<span class="text-neutral-900 dark:text-white font-semibold">${albumsTitle}</span>
+                    </span>
+                  </div>
+
+                  ${showMatchedFavSongsCount > 0 ? `
+                    <div class="mt-1.5 inline-flex items-center space-x-1 text-[10px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 px-2 py-0.5 rounded-full">
+                      <i class="fa-solid fa-star text-[9px]"></i>
+                      <span>命中你的 ${showMatchedFavSongsCount} 首心水歌曲</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Top-right Heart Button -->
+              <button 
+                onclick="toggleShowFavorite('${show.id}', event)" 
+                class="w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                  isShowFav 
+                    ? 'bg-brand-red text-white shadow-md' 
+                    : 'bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800/80 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-700 dark:hover:text-white'
+                } btn-press"
+                title="${isShowFav ? '取消心水場次' : '加入心水場次'}"
+                aria-label="心水專場"
+              >
+                <i class="${isShowFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart'} text-sm"></i>
+              </button>
+            </div>
+
+            <!-- Albums & Tracklists (No language tag) -->
+            <div class="p-4 sm:p-5 space-y-4">
+              ${show.albums.map(album => `
+                <div class="border-t border-neutral-100 dark:border-neutral-800/60 first:border-t-0 first:pt-0 pt-3">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
+                      <h4 class="text-xs font-bold text-neutral-900 dark:text-neutral-200 tracking-wide">
+                        《${album.name}》
+                        <span class="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono font-normal">(${album.year})</span>
+                      </h4>
+                    </div>
+                    <!-- Updated text: 首曲目 -->
+                    <span class="text-[10px] text-neutral-500 font-mono">${album.tracks.length} 首曲目</span>
+                  </div>
+
+                  <!-- Track Pills Grid -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${album.tracks.map((track, trackIdx) => {
+                      const isSongFav = state.favoriteSongs.has(track);
+                      const isSearchMatch = query && track.toLowerCase().includes(query);
+
+                      return `
+                        <div class="group flex items-center justify-between p-2 rounded-xl border transition-all ${
+                          isSearchMatch 
+                            ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-500/40' 
+                            : (isSongFav 
+                                ? 'bg-red-50/70 dark:bg-red-950/20 border-red-200 dark:border-red-900/40' 
+                                : 'bg-neutral-50 dark:bg-neutral-900/60 border-neutral-200 dark:border-neutral-800/60 hover:border-neutral-300 dark:hover:border-neutral-700')
+                        }">
+                          <div class="flex items-center space-x-2 overflow-hidden flex-1 mr-2">
+                            <span class="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 w-4">${String(trackIdx + 1).padStart(2, '0')}</span>
+                            <span class="text-xs font-medium truncate ${isSongFav ? 'text-brand-red font-semibold' : 'text-neutral-800 dark:text-neutral-300'}">
+                              ${track}
+                            </span>
+                          </div>
+
+                          <!-- Action buttons: Favorite & Spotify / YT Music links -->
+                          <div class="flex items-center space-x-1.5 shrink-0">
+                            <!-- Favorite Song Button -->
+                            <button 
+                              onclick="toggleSongFavorite('${track.replace(/'/g, "\\'")}', '${show.id}', event)"
+                              class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] transition-colors ${
+                                isSongFav ? 'text-brand-red bg-red-100 dark:bg-red-950/40' : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 bg-neutral-100/60 dark:bg-neutral-800/50'
+                              }"
+                              title="${isSongFav ? '取消收藏' : '收藏歌曲'}"
+                              aria-label="收藏歌曲"
+                            >
+                              <i class="${isSongFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+                            </button>
+
+                            <!-- Clean Spotify button (Icon Only) -->
+                            <button 
+                              onclick="openMusicPreview('${track.replace(/'/g, "\\'")}', 'spotify', event)"
+                              class="w-7 h-7 rounded-lg bg-white dark:bg-neutral-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 dark:hover:text-emerald-400 text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-all border border-neutral-200 dark:border-neutral-700/60 shadow-sm"
+                              title="在 Spotify 搜尋「${track} 陳奕迅」"
+                              aria-label="在 Spotify 預覽試聽"
+                            >
+                              <i class="fa-brands fa-spotify text-emerald-500 text-sm"></i>
+                            </button>
+
+                            <!-- Clean YT Music button (Icon Only) -->
+                            <button 
+                              onclick="openMusicPreview('${track.replace(/'/g, "\\'")}', 'youtube', event)"
+                              class="w-7 h-7 rounded-lg bg-white dark:bg-neutral-800 hover:bg-red-50 dark:hover:bg-red-950/60 hover:text-brand-red dark:hover:text-brand-red text-neutral-600 dark:text-neutral-300 flex items-center justify-center transition-all border border-neutral-200 dark:border-neutral-700/60 shadow-sm"
+                              title="在 YouTube Music 搜尋「${track} 陳奕迅」"
+                              aria-label="在 YouTube Music 預覽試聽"
+                            >
+                              <i class="fa-brands fa-youtube text-brand-red text-xs"></i>
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Card Footer: Clean single info text, dropped duplicate heart pill -->
+            <div class="px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950/60 border-t border-neutral-100 dark:border-neutral-800/40 flex items-center justify-between text-[11px] text-neutral-500">
+              <span class="font-mono text-[10px]">本場共 ${showTotalTracks} 首曲目 · 8:00PM 演藝學院</span>
+              <span class="text-[10px] text-neutral-400 font-mono">${show.dayOfWeekEn} SHOW</span>
+            </div>
+
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    /* =========================================================================
+       SUMMARY & RECOMMENDATION REPORT
+       ========================================================================= */
+    function toggleSummaryModal(show) {
+      const modal = document.getElementById("summary-modal");
+      if (show) {
+        generateSummaryReport();
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      } else {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+    }
+
+    function generateSummaryReport() {
+      const recBody = document.getElementById("recommendation-body");
+      const showsList = document.getElementById("summary-shows-list");
+      const songsList = document.getElementById("summary-songs-list");
+
+      // Calculate score for each show
+      const scores = CONCERT_DATES.map(show => {
+        let matchedSongs = [];
+        let totalShowTracks = 0;
+
+        show.albums.forEach(alb => {
+          totalShowTracks += alb.tracks.length;
+          alb.tracks.forEach(track => {
+            if (state.favoriteSongs.has(track)) {
+              matchedSongs.push({ track, album: alb.name });
+            }
+          });
+        });
+
+        const isFav = state.favoriteShows.has(show.id);
+        const totalScore = (matchedSongs.length * 4) + (isFav ? 6 : 0);
+
+        return {
+          show,
+          matchedSongs,
+          totalShowTracks,
+          totalScore,
+          isFav
+        };
+      });
+
+      scores.sort((a, b) => b.totalScore - a.totalScore);
+      const topChoice = scores[0];
+
+      if (state.favoriteSongs.size === 0 && state.favoriteShows.size === 0) {
+        recBody.innerHTML = `
+          <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            你目前尚未收藏任何場次或歌曲。你可以點擊列表中的「愛心」收藏你想聽的歌曲（例如《浮誇》、《陀飛輪》、《沙龍》、《Lonely Christmas》等），系統會即時為你精算推薦最佳專場！
+          </p>
+        `;
+      } else if (topChoice && (topChoice.matchedSongs.length > 0 || topChoice.isFav)) {
+        recBody.innerHTML = `
+          <div class="space-y-1.5">
+            <div class="text-sm font-bold text-neutral-900 dark:text-white flex items-center space-x-2">
+              <span class="text-brand-red">● 首選推薦：</span>
+              <span>${topChoice.show.dateDisplay} (${topChoice.show.dayOfWeek})</span>
+            </div>
+            <p class="text-neutral-700 dark:text-neutral-300">
+              專輯：<span class="font-semibold text-neutral-900 dark:text-white">${topChoice.show.albums.map(a => `《${a.name}》`).join(' + ')}</span>
+            </p>
+            <div class="text-[11px] text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-950/60 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-800">
+              ${topChoice.matchedSongs.length > 0 ? `
+                <p class="text-amber-600 dark:text-amber-400 font-medium mb-1">
+                  命中你 ${topChoice.matchedSongs.length} 首心水金曲 (佔該場 ${Math.round(topChoice.matchedSongs.length / topChoice.totalShowTracks * 100)}%)：
+                </p>
+                <p class="text-neutral-800 dark:text-neutral-300 leading-normal">
+                  ${topChoice.matchedSongs.map(m => `《${m.track}》`).join('、')}
+                </p>
+              ` : `
+                <p class="text-neutral-800 dark:text-neutral-300">你已手動將此專場標記為心水首選！</p>
+              `}
+            </div>
+          </div>
+        `;
+      } else {
+        recBody.innerHTML = `<p class="text-neutral-600 dark:text-neutral-400">請繼續收藏歌曲以獲取更精準的搶飛分析。</p>`;
+      }
+
+      // Render Saved Shows List
+      if (state.favoriteShows.size === 0) {
+        showsList.innerHTML = `<p class="text-xs text-neutral-400 dark:text-neutral-500 py-1">未儲存任何場次</p>`;
+      } else {
+        showsList.innerHTML = Array.from(state.favoriteShows).map(showId => {
+          const s = CONCERT_DATES.find(item => item.id === showId);
+          if (!s) return '';
+          return `
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-xs">
+              <div>
+                <span class="font-bold text-neutral-900 dark:text-white">${s.dateDisplay} (${s.dayOfWeekEn})</span>
+                <span class="text-neutral-500 dark:text-neutral-400 block text-[11px] mt-0.5">專輯：${s.albums.map(a => `《${a.name}》`).join(' + ')}</span>
+              </div>
+              <button onclick="toggleShowFavorite('${s.id}', event); generateSummaryReport();" class="text-neutral-400 hover:text-brand-red p-1">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Saved Songs List
+      if (state.favoriteSongs.size === 0) {
+        songsList.innerHTML = `<p class="text-xs text-neutral-400 dark:text-neutral-500 py-1">未儲存任何歌曲</p>`;
+      } else {
+        songsList.innerHTML = Array.from(state.favoriteSongs).map(song => {
+          const foundShows = CONCERT_DATES.filter(s => s.albums.some(a => a.tracks.includes(song)));
+          const datesHint = foundShows.map(s => `${s.monthShort.split(' ')[0]} ${s.dayNum}`).join(' / ');
+          return `
+            <div class="flex items-center justify-between px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-xs">
+              <span class="text-neutral-800 dark:text-neutral-200 font-medium truncate mr-2">《${song}》</span>
+              <div class="flex items-center space-x-2 shrink-0">
+                <span class="text-[10px] font-mono text-neutral-400 dark:text-neutral-500">${datesHint}</span>
+                <button onclick="toggleSongFavorite('${song.replace(/'/g, "\\'")}', null, event); generateSummaryReport();" class="text-neutral-400 hover:text-brand-red">
+                  <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function clearAllFavorites() {
+      state.favoriteShows.clear();
+      state.favoriteSongs.clear();
+      saveState();
+      renderShows();
+      generateSummaryReport();
+      showToast("已清空所有心水設定", false);
+    }
+
+    function copyWishlistToClipboard() {
+      playBeepTone(784, 'sine', 0.15);
+
+      let text = `【陳奕迅 Recording Sessions 搶飛心水清單】\n`;
+      text += `地點：香港演藝學院 歌劇院 | 票價：$1,280 / $980\n\n`;
+
+      if (state.favoriteShows.size > 0) {
+        text += `★ 心水專場 (${state.favoriteShows.size} 場)：\n`;
+        Array.from(state.favoriteShows).forEach(id => {
+          const s = CONCERT_DATES.find(i => i.id === id);
+          if (s) {
+            text += `- ${s.dateDisplay} (${s.dayOfWeek}) : 專輯 ${s.albums.map(a => `《${a.name}》`).join(' + ')}\n`;
+          }
+        });
+        text += `\n`;
+      }
+
+      if (state.favoriteSongs.size > 0) {
+        text += `★ 必聽心水單曲 (${state.favoriteSongs.size} 首)：\n`;
+        Array.from(state.favoriteSongs).forEach((song, i) => {
+          text += `${i + 1}. 《${song}》\n`;
+        });
+        text += `\n`;
+      }
+
+      text += `Recording Sessions 現場錄音專場導覽`;
+
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("已複製搶飛清單至剪貼簿！可即刻分享朋友！");
+      } catch (err) {
+        showToast("複製失敗，請手動截圖分享");
+      }
+    }
+
+    /* =========================================================================
+       INITIALIZATION
+       ========================================================================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      loadSavedState();
+      renderShows();
+
+      const searchInput = document.getElementById("search-input");
+      const clearSearchBtn = document.getElementById("clear-search");
+
+      searchInput.addEventListener("input", (e) => {
+        state.searchQuery = e.target.value;
+        if (state.searchQuery.trim().length > 0) {
+          clearSearchBtn.classList.remove("hidden");
+        } else {
+          clearSearchBtn.classList.add("hidden");
+        }
+        renderShows();
+      });
+
+      clearSearchBtn.addEventListener("click", () => {
+        resetFilters();
+      });
+
+      document.getElementById("summary-modal").addEventListener("click", (e) => {
+        if (e.target.id === "summary-modal") {
+          toggleSummaryModal(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
